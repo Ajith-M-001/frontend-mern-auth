@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaRegUser, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
+import { Link } from "react-router-dom";
 
 const Registeruser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -78,7 +79,9 @@ const Registeruser = () => {
         <div className="text-center my-2 text-lg">
           <p>
             Already have an Account ?
-            <span className="text-blue-600 hover:underline">Login</span>
+            <Link to={"/login"} className="text-blue-600 ml3 hover:underline">
+              Login
+            </Link>
           </p>
         </div>
       </form>

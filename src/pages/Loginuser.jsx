@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
+import { Link } from "react-router-dom";
 
 const Loginuser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +48,12 @@ const Loginuser = () => {
         <div className="text-center my-2 text-lg">
           <p>
             New User ?
-            <span className="text-blue-600 hover:underline">Register</span>
+            <Link
+              to={"/register"}
+              className="text-blue-600 ml-3 hover:underline"
+            >
+              Register
+            </Link>
           </p>
         </div>
       </form>
