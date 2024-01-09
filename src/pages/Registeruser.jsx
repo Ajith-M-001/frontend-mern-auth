@@ -6,6 +6,12 @@ import { Link } from "react-router-dom";
 const Registeruser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmpassword: "",
+  });
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -15,26 +21,43 @@ const Registeruser = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
   return (
     <div className="container mx-auto mt-10">
-      <form className="max-w-sm mx-auto p-5 border rounded-md shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-sm mx-auto p-5 border rounded-md shadow-sm"
+      >
         <h1 className="text-2xl font-bold text-center mb-5">
           Create New Account
         </h1>
         <div className="my-2 relative">
           <FaRegUser className="absolute text-lg top-1/2 -translate-y-1/2 left-3" />
           <input
+            onChange={handleChange}
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type="text"
             placeholder="Enter Your Name"
+            name="name"
           />
         </div>
         <div className="my-2 relative">
           <TfiEmail className="absolute text-lg top-1/2 -translate-y-1/2 left-3" />
           <input
+            onChange={handleChange}
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type="email"
             placeholder="Enter Your Email"
+            name="email"
           />
         </div>
         <div className="my-2 relative">
@@ -50,9 +73,11 @@ const Registeruser = () => {
             />
           )}
           <input
+            onChange={handleChange}
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
+            name="password"
           />
         </div>
         <div className="my-2 relative">
@@ -68,9 +93,11 @@ const Registeruser = () => {
             />
           )}
           <input
+            onChange={handleChange}
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
+            name="confirmpassword"
           />
         </div>
         <button className="w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800">

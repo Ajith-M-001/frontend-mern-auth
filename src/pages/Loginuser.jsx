@@ -5,14 +5,31 @@ import { Link } from "react-router-dom";
 
 const Loginuser = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
   return (
     <div className="container mx-auto mt-10">
-      <form className="max-w-sm mx-auto p-5 border rounded-md shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-sm mx-auto p-5 border rounded-md shadow-sm"
+      >
         <h1 className="text-2xl font-bold text-center mb-5">Welcome Back!!</h1>
 
         <div className="my-2 relative">
@@ -21,6 +38,8 @@ const Loginuser = () => {
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type="email"
             placeholder="Enter Your Email"
+            name="email"
+            onChange={handleChange}
           />
         </div>
         <div className="my-2 relative">
@@ -39,6 +58,8 @@ const Loginuser = () => {
             className="w-full pl-10 px-4 py-2 rounded-md outline-none border focus:border-gray-600"
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
+            name="password"
+            onChange={handleChange}
           />
         </div>
 
