@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { FaRegUser, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../redux/slices/userApiSlice";
+import { toast } from "react-toastify";
 
 const Registeruser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +14,8 @@ const Registeruser = () => {
     password: "",
     confirmpassword: "",
   });
+  const [registerUser, { isLoading }] = useRegisterMutation();
+  const navigate = useNavigate();
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -26,9 +30,32 @@ const Registeruser = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    if (formData.password !== formData.confirmpassword) {
+      toast.error("password didn't match");
+    } else {
+      try {
+        const response = await registerUser({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }).unwrap();
+        toast.success(response.message);
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmpassword: "",
+        });
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 6000);
+      } catch (error) {
+        toast.error(error?.data?.message || error.message);
+      }
+    }
   };
 
   return (
@@ -48,6 +75,7 @@ const Registeruser = () => {
             type="text"
             placeholder="Enter Your Name"
             name="name"
+            value={formData.name}
           />
         </div>
         <div className="my-2 relative">
@@ -58,6 +86,7 @@ const Registeruser = () => {
             type="email"
             placeholder="Enter Your Email"
             name="email"
+            value={formData.email}
           />
         </div>
         <div className="my-2 relative">
@@ -78,6 +107,7 @@ const Registeruser = () => {
             type={showPassword ? "text" : "password"}
             placeholder="Enter Password"
             name="password"
+            value={formData.password}
           />
         </div>
         <div className="my-2 relative">
@@ -98,10 +128,11 @@ const Registeruser = () => {
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
             name="confirmpassword"
+            value={formData.confirmpassword}
           />
         </div>
         <button className="w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800">
-          Register
+          {isLoading ? "Loading..." : "Register"}
         </button>
         <div className="text-center my-2 text-lg">
           <p>
