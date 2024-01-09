@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../redux/slices/userApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { setcredentials } from "../redux/slices/userSlice";
+import { PulseLoader } from "react-spinners";
 
 const Loginuser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -9,6 +14,16 @@ const Loginuser = () => {
     email: "",
     password: "",
   });
+  const [loginuser, { isLoading }] = useLoginMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo, navigate]);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -19,9 +34,18 @@ const Loginuser = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      const response = await loginuser({
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+      dispatch(setcredentials(response));
+      navigate("/");
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
   };
 
   return (
@@ -63,8 +87,13 @@ const Loginuser = () => {
           />
         </div>
 
-        <button className="w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800">
-          Login
+        <button
+          disabled={isLoading}
+          className={`w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800  ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
+          {isLoading ? <PulseLoader color="#ffffff" size={10} /> : "Login"}
         </button>
         <div className="text-center my-2 text-lg">
           <p>

@@ -131,7 +131,12 @@ const Registeruser = () => {
             value={formData.confirmpassword}
           />
         </div>
-        <button className="w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800">
+        <button
+          disabled={isLoading}
+          className={`w-full  px-4 py-2 rounded-md bg-gray-700 text-white text-lg font-semibold my-2 hover:bg-gray-800 ${
+            isLoading ? "cursor-not-allowed opacity-50" : ""
+          }`}
+        >
           {isLoading ? "Loading..." : "Register"}
         </button>
         <div className="text-center my-2 text-lg">
