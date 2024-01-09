@@ -12,11 +12,13 @@ const Header = () => {
         {userInfo ? (
           <div className="flex items-center space-x-2">
             <p>{userInfo.name}</p>
-            <img
-              className="w-10 h-10 object-cover rounded-full cursor-pointer"
-              src={userInfo.image}
-              alt="profile pic"
-            />
+            <Link to={"/profile"}>
+              <img
+                className="w-10 h-10 object-cover rounded-full cursor-pointer"
+                src={userInfo.image}
+                alt="profile pic"
+              />
+            </Link>
           </div>
         ) : (
           <nav className="space-x-5 font-semibold text-lg">
