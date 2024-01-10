@@ -1,5 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useLogoutMutation } from "../redux/slices/userApiSlice";
+import {
+  useDeleteMutation,
+  useLogoutMutation,
+} from "../redux/slices/userApiSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { clearCredentails } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
@@ -7,6 +10,7 @@ import { toast } from "react-toastify";
 const Profile = () => {
   const { userInfo } = useSelector((state) => state.user);
   const [logoutuser] = useLogoutMutation();
+  const [deleteuser] = useDeleteMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -15,6 +19,21 @@ const Profile = () => {
       await logoutuser().unwrap();
       dispatch(clearCredentails());
       navigate("/login");
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const confirm = window.confirm(
+        "Are you Sure You Want to Delete your Account ?"
+      );
+      if (confirm) {
+        await deleteuser();
+        dispatch(clearCredentails());
+        navigate("/login");
+      }
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
@@ -37,7 +56,9 @@ const Profile = () => {
         <Link to={"/update"}>
           <p className="hover:underline cursor-pointer">Update</p>
         </Link>
-        <p className="hover:underline cursor-pointer">delete</p>
+        <p onClick={handleDelete} className="hover:underline cursor-pointer">
+          delete
+        </p>
         <p onClick={handleLogout} className="hover:underline cursor-pointer">
           Logout
         </p>
