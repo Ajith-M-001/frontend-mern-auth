@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { FaRegUser, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
-import { useRegisterMutation } from "../redux/slices/userApiSlice";
+import { useUpdateMutation } from "../redux/slices/userApiSlice";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setcredentials } from "../redux/slices/userSlice";
 
 const Updateuser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,10 +15,12 @@ const Updateuser = () => {
     email: "",
     password: "",
     confirmpassword: "",
+    image: "",
   });
   const { userInfo } = useSelector((state) => state.user);
-  const [registerUser, { isLoading }] = useRegisterMutation();
+  const [updateuser, { isLoading }] = useUpdateMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setFormData(userInfo);
@@ -42,22 +45,21 @@ const Updateuser = () => {
       toast.error("password didn't match");
     } else {
       try {
-        const response = await registerUser({
+        const response = await updateuser({
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          image: formData.image,
         }).unwrap();
-        toast.success(response.message);
+        toast.success("user updated successfully");
         setFormData({
           name: "",
           email: "",
           password: "",
           confirmpassword: "",
         });
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 6000);
+        dispatch(setcredentials(response));
+        navigate("/profile");
       } catch (error) {
         toast.error(error?.data?.message || error.message);
       }
