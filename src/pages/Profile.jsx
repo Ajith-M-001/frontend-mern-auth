@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "../redux/slices/userApiSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { clearCredentails } from "../redux/slices/userSlice";
 import { toast } from "react-toastify";
 
@@ -34,7 +34,9 @@ const Profile = () => {
         </p>
       </div>
       <div className=" border p-5 mb-10 text-red-600 text-lg font-semibold flex justify-between items-center">
-        <p className="hover:underline cursor-pointer">Update</p>
+        <Link to={"/update"}>
+          <p className="hover:underline cursor-pointer">Update</p>
+        </Link>
         <p className="hover:underline cursor-pointer">delete</p>
         <p onClick={handleLogout} className="hover:underline cursor-pointer">
           Logout
