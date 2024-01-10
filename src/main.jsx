@@ -16,6 +16,7 @@ import { Provider } from "react-redux";
 import Profile from "./pages/Profile.jsx";
 import Private from "./components/Private.jsx";
 import Updateuser from "./pages/Updateuser.jsx";
+import Custom404Error from "./pages/Custom404Error.jsx";
 
 // You can do this:
 const router = createBrowserRouter(
@@ -28,6 +29,8 @@ const router = createBrowserRouter(
         <Route path="profile" element={<Profile />} />
         <Route path="update" element={<Updateuser />} />
       </Route>
+
+      <Route path="*" element={<Custom404Error />} />
     </Route>
   )
 );
