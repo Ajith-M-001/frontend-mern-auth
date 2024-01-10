@@ -4,6 +4,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../redux/slices/userApiSlice";
 import { toast } from "react-toastify";
+import {PulseLoader} from 'react-spinners'
 
 const Registeruser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -137,7 +138,7 @@ const Registeruser = () => {
             isLoading ? "cursor-not-allowed opacity-50" : ""
           }`}
         >
-          {isLoading ? "Loading..." : "Register"}
+          {isLoading ? <PulseLoader color="#ffffff" size={10} /> : "Register"}
         </button>
         <div className="text-center my-2 text-lg">
           <p>

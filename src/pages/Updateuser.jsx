@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaRegUser, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,14 @@ import { useUpdateMutation } from "../redux/slices/userApiSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setcredentials } from "../redux/slices/userSlice";
+import {
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+  getStorage,
+} from "firebase/storage";
+import app from "../firebase";
+import { PulseLoader } from "react-spinners";
 
 const Updateuser = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,10 +29,49 @@ const Updateuser = () => {
   const [updateuser, { isLoading }] = useUpdateMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const imageRef = useRef();
+  const [image, setImage] = useState(undefined);
+  const [progresspercent, setProgresspercent] = useState(0);
+
+  // for firebase TfiSettings
+
+  //  allow read;
+  //   allow write : if
+  //   request.resource.size < 5 * 1024 * 1024 &&
+  //   request.resource.contentType.matches('image/.*')
 
   useEffect(() => {
+    if (image) {
+      handleImageUpload(image);
+    }
     setFormData(userInfo);
-  }, [userInfo]);
+  }, [userInfo, image]);
+
+  const handleImageUpload = (image) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + image.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, image);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgresspercent(progress);
+      },
+      (error) => {
+        alert(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, image: downloadURL });
+        });
+      }
+    );
+  };
+
+  console.log(formData.image);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -65,7 +112,7 @@ const Updateuser = () => {
       }
     }
   };
-
+  console.log(progresspercent);
   return (
     <div className="container mx-auto mt-10">
       <form
@@ -73,12 +120,29 @@ const Updateuser = () => {
         className="max-w-sm mx-auto p-5 border rounded-md shadow-sm"
       >
         <h1 className="text-2xl font-bold text-center mb-5">Update</h1>
-        <div className="flex justify-center items-center my-2">
+        <div className="flex space-y-3 flex-col justify-center items-center my-2">
+          <input
+            onChange={(e) => setImage(e.target.files[0])}
+            type="file"
+            accept="image/*"
+            hidden
+            ref={imageRef}
+          />
           <img
             className="h-20 w-20 rounded-full object-cover cursor-pointer"
-            src={userInfo.image}
+            src={formData.image || userInfo.image}
             alt="profile pic"
+            onClick={() => imageRef.current.click()}
           />
+          <p>
+            {progresspercent > 0 && progresspercent < 100 ? (
+              <span className="text-gray-600">{` uploading ${progresspercent} %`}</span>
+            ) : progresspercent === 100 ? (
+              <span className="text-green-600">Image uploaded Successfully</span>
+            ) : (
+              ""
+            )}
+          </p>
         </div>
         <div className="my-2 relative">
           <FaRegUser className="absolute text-lg top-1/2 -translate-y-1/2 left-3" />
@@ -148,7 +212,7 @@ const Updateuser = () => {
             isLoading ? "cursor-not-allowed opacity-50" : ""
           }`}
         >
-          {isLoading ? "Loading..." : "Update"}
+          {isLoading ? <PulseLoader color="#ffffff" size={10} /> : "Update"}
         </button>
       </form>
     </div>
